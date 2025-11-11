@@ -1,71 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Bender's Tool Kit – Web Prototype</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
-    <script src="main.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BTK IBD Plot (JS)</title>
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 18px; }
+    .controls { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+    .control { display:flex; flex-direction:column; }
+    label { font-size:13px; margin-bottom:4px; }
+  input[type="number"] { width:100px; padding:6px; }
+  .range { width:200px; margin-top:6px; }
+    #results { margin-top:8px; font-size:14px; }
+    #plot { width:900px; height:500px; }
+    .small { font-size:12px; color:#555 }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Bender's Tool Kit – Browser Preview</h1>
-        <p>Core calculation module recreated for the web. Adjust inputs to update the arch deflection plot.</p>
-    </header>
+  <h2>Force systems from an ideal arch</h2>
 
-    <main>
-        <section class="controls" aria-label="Input controls">
-            <form id="controls-form">
-                <div class="form-group">
-                    <label for="input-L">L (mm)</label>
-                    <input type="number" id="input-L" min="1" max="50" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="input-a">Slot angle a (°)</label>
-                    <input type="number" id="input-a" min="-80" max="80" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="input-b">Slot angle b (°)</label>
-                    <input type="number" id="input-b" min="-80" max="80" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="select-material">Material</label>
-                    <select id="select-material"></select>
-                </div>
-                <div class="form-group">
-                    <label for="input-E">E (GPa)</label>
-                    <input type="number" id="input-E" min="14.5" max="207" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label for="select-cross-section">Cross section</label>
-                    <select id="select-cross-section"></select>
-                </div>
-                <div class="form-group">
-                    <label for="input-I">I (×10⁻¹⁵ m⁴)</label>
-                    <input type="number" id="input-I" min="0.13" max="10.34" step="0.01" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" id="reset-button">Reset</button>
-                    <button type="submit">Update</button>
-                </div>
-                <p id="validation-message" role="alert"></p>
-            </form>
-        </section>
+  <div class="controls">
+    <div class="control">
+      <label for="L">L (mm)</label>
+      <input id="L" type="number" step="0.1" value="7.0" min="1" max="50">
+      <input id="L_range" class="range" type="range" min="1" max="50" step="0.1" value="7.0">
+    </div>
+    <div class="control">
+      <label for="a">a (deg)</label>
+      <input id="a" type="number" step="0.1" value="0" min="-80" max="80">
+      <input id="a_range" class="range" type="range" min="-80" max="80" step="0.1" value="0">
+    </div>
+    <div class="control">
+      <label for="b">b (deg)</label>
+      <input id="b" type="number" step="0.1" value="0" min="-80" max="80">
+      <input id="b_range" class="range" type="range" min="-80" max="80" step="0.1" value="0">
+    </div>
+    <div class="control">
+      <label for="material">Material</label>
+      <select id="material">
+        <option>Stainless Steel</option>
+        <option>Beta Titanium</option>
+        <option>Nickel Titanium</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="cross_section">Cross Section</label>
+      <select id="cross_section">
+        <option>0.009 Round</option>
+        <option>0.010 Round</option>
+        <option>0.012 Round</option>
+        <option>0.014 Round</option>
+        <option>0.016 Round</option>
+        <option>0.017 Round</option>
+        <option>0.018 Round</option>
+        <option>0.019 Round</option>
+        <option>0.020 Round</option>
+        <option>0.021 Round</option>
+        <option>0.022 Round</option>
+        <option>0.010x0.020 Rect</option>
+        <option>0.016x0.022 Rect</option>
+        <option>0.017x0.025 Rect</option>
+        <option>0.018x0.025 Rect</option>
+        <option>0.019x0.025 Rect</option>
+        <option>0.021x0.025 Rect</option>
+        <option>0.022x0.028 Rect</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="E">E (GPa)</label>
+      <input id="E" type="number" step="0.1" value="207.0" min="14.5" max="207.0">
+      <input id="E_range" class="range" type="range" min="14.5" max="207.0" step="0.1" value="207.0">
+    </div>
+    <div class="control">
+      <label for="I">I (×10⁻¹⁵ m⁴)</label>
+      <input id="I" type="number" step="0.01" value="1.34" min="0.13" max="10.34">
+      <input id="I_range" class="range" type="range" min="0.13" max="10.34" step="0.01" value="1.34">
+    </div>
 
-        <section class="plot" aria-label="Plot output">
-            <div id="plot"></div>
-            <div id="equation"></div>
-        </section>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+  <button id="plotBtn">Plot</button>
+  <label class="small"><input id="autoCalc" type="checkbox" checked> Auto-calc</label>
+      <label class="small"><input id="showEq" type="checkbox" checked> Show equation</label>
+    </div>
+  </div>
 
-        <section class="results" aria-label="Calculated forces and moments">
-            <h2>Results</h2>
-            <dl id="results-list"></dl>
-        </section>
-    </main>
+  <div id="results"></div>
+  <div id="plot"></div>
 
-    <footer>
-        <small>Prototype generated from the desktop version (ver 21.09K).</small>
-    </footer>
+  <script src="BTK_21.09K.js"></script>
 </body>
 </html>
