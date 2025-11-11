@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Bender's Tool Kit – Web Prototype</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Bender's Tool Kit – Browser Preview</h1>
+        <p>Core calculation module recreated for the web. Adjust inputs to update the arch deflection plot.</p>
+    </header>
+
+    <main>
+        <section class="controls" aria-label="Input controls">
+            <form id="controls-form">
+                <div class="form-group">
+                    <label for="input-L">L (mm)</label>
+                    <input type="number" id="input-L" min="1" max="50" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-a">Slot angle a (°)</label>
+                    <input type="number" id="input-a" min="-80" max="80" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-b">Slot angle b (°)</label>
+                    <input type="number" id="input-b" min="-80" max="80" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="select-material">Material</label>
+                    <select id="select-material"></select>
+                </div>
+                <div class="form-group">
+                    <label for="input-E">E (GPa)</label>
+                    <input type="number" id="input-E" min="14.5" max="207" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="select-cross-section">Cross section</label>
+                    <select id="select-cross-section"></select>
+                </div>
+                <div class="form-group">
+                    <label for="input-I">I (×10⁻¹⁵ m⁴)</label>
+                    <input type="number" id="input-I" min="0.13" max="10.34" step="0.01" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="reset-button">Reset</button>
+                    <button type="submit">Update</button>
+                </div>
+                <p id="validation-message" role="alert"></p>
+            </form>
+        </section>
+
+        <section class="plot" aria-label="Plot output">
+            <div id="plot"></div>
+            <div id="equation"></div>
+        </section>
+
+        <section class="results" aria-label="Calculated forces and moments">
+            <h2>Results</h2>
+            <dl id="results-list"></dl>
+        </section>
+    </main>
+
+    <footer>
+        <small>Prototype generated from the desktop version (ver 21.09K).</small>
+    </footer>
+</body>
+</html>
