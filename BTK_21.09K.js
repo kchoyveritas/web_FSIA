@@ -241,7 +241,9 @@ function calculate_and_plot(){
   };
 
   // Hide Plotly's floating modebar (pan/zoom toolbar) and logo for a cleaner UI
-  Plotly.newPlot('plot', [trace], layout, {responsive:true, displayModeBar:false, displaylogo:false});
+  // Make the plot non-interactive to disable clicks, drag/pinch zoom and other gestures
+  // Keep responsive and hide the modebar/logo but make the plot static
+  Plotly.newPlot('plot', [trace], layout, {responsive:true, displayModeBar:false, displaylogo:false, staticPlot:true});
 
   // Display both the original g / g·mm units (rounded) and SI converted values
   document.getElementById('results').innerHTML =
