@@ -190,7 +190,8 @@ function calculate_and_plot(){
 
   layout.annotations.push({
     x: x_mm_plot[0],
-    y: leftY,
+    // place Fa/Ma at y = 0 (data coords) so the labels sit at the baseline
+    y: 0,
     xref: 'x',
     yref: 'y',
     text: `<b>Fa</b>: ${Fa_rounded} g<br><b>Ma</b>: ${Ma_rounded} g·mm`,
@@ -203,7 +204,8 @@ function calculate_and_plot(){
 
   layout.annotations.push({
     x: x_mm_plot[x_mm_plot.length - 1],
-    y: rightY,
+    // place Fb/Mb at y = 0 (data coords) so the labels sit at the baseline
+    y: 0,
     xref: 'x',
     yref: 'y',
     text: `<b>Fb</b>: ${Fb_rounded} g<br><b>Mb</b>: ${Mb_rounded} g·mm`,
