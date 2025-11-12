@@ -171,6 +171,8 @@ function calculate_and_plot(){
 
   const layout = {
     title: 'Force systems from an ideal arch',
+    autosize: true,
+    margin: { t: 50, b: 50, l: 60, r: 20 },
     xaxis: { title: 'x [mm]' },
     yaxis: { title: 'y [mm]' },
     annotations: []
@@ -317,3 +319,12 @@ update_I_from_cross_section();
 
 // initial plot
 calculate_and_plot();
+
+// Ensure plot resizes on window changes. Plotly's responsive option usually handles this,
+// but calling Plotly.Plots.resize gives a reliable immediate resize for complex layouts.
+window.addEventListener('resize', ()=>{
+  try{
+    const p = document.getElementById('plot');
+    if(p) Plotly.Plots.resize(p);
+  }catch(e){ /* ignore resize errors */ }
+});
