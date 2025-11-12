@@ -216,18 +216,23 @@ function calculate_and_plot(){
     bgcolor: 'rgba(255,255,255,0.8)'
   });
 
-  // place the equation just above the left Fa/Ma label if requested
+  // place the equation at data y = 0 (baseline) but offset slightly so it
+  // does not overlap the Fa/Ma label. We compute an x-offset in data units
+  // (based on the x-span) and place the text at y=0 with yanchor 'top'
+  // so it appears beneath the baseline-labels.
   if(showEq){
-    const eqY = leftY + Math.max(1, 0.03 * yspan);
+    const xspan = x_mm_plot[x_mm_plot.length - 1] - x_mm_plot[0];
+    const xOffset = Math.max(1, 0.03 * xspan); // data units (mm)
+    const eqX = x_mm_plot[0] + xOffset;
     layout.annotations.push({
-      x: x_mm_plot[0],
-      y: eqY,
+      x: eqX,
+      y: 0,
       xref: 'x',
       yref: 'y',
       text: math_eq,
       showarrow: false,
       xanchor: 'left',
-      yanchor: 'bottom',
+      yanchor: 'top',
       font: { color: 'black', size: 12 },
       bgcolor: 'rgba(255,255,255,0.85)'
     });
@@ -259,6 +264,11 @@ function calculate_and_plot(){
 // wire up events
 document.getElementById('plotBtn').addEventListener('click', calculate_and_plot);
 const auto = document.getElementById('autoCalc');
+// When the "Show equation" checkbox is toggled, update immediately.
+const showEqEl = document.getElementById('showEq');
+if (showEqEl) {
+  showEqEl.addEventListener('change', () => { calculate_and_plot(); });
+}
 
 // Sync numeric inputs with newly added range sliders. Use 'input' for live updates while dragging.
 ['L','a','b','E','I'].forEach(id=>{
