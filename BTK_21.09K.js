@@ -170,7 +170,6 @@ function calculate_and_plot(){
   const showEq = document.getElementById('showEq').checked;
 
   const layout = {
-    title: 'Force systems from an ideal arch',
     autosize: true,
     margin: { t: 50, b: 50, l: 60, r: 20 },
     xaxis: { title: 'x [mm]' },
