@@ -219,23 +219,17 @@ function calculate_and_plot(){
   // does not overlap the Fa/Ma label. We compute an x-offset in data units
   // (based on the x-span) and place the text at y=0 with yanchor 'top'
   // so it appears beneath the baseline-labels.
-  if(showEq){
-    const xspan = x_mm_plot[x_mm_plot.length - 1] - x_mm_plot[0];
-    const xOffset = Math.max(1, 0.03 * xspan); // data units (mm)
-    const eqX = x_mm_plot[0] + xOffset;
-    layout.annotations.push({
-      x: eqX,
-      y: 0,
-      xref: 'x',
-      yref: 'y',
-      text: math_eq,
-      showarrow: false,
-      xanchor: 'left',
-      yanchor: 'top',
-      font: { color: 'black', size: 12 },
-      bgcolor: 'rgba(255,255,255,0.85)'
-    });
-  }
+  // Show equation in the dedicated controls area (below the 'Show equation' checkbox)
+  try{
+    const eqEl = document.getElementById('equation');
+    if(eqEl){
+      if(showEq){
+        eqEl.textContent = math_eq;
+      } else {
+        eqEl.textContent = '';
+      }
+    }
+  }catch(e){ /* ignore errors if element not present */ }
 
   const trace = {
     x: x_mm_plot,
@@ -251,13 +245,13 @@ function calculate_and_plot(){
   // Keep responsive and hide the modebar/logo but make the plot static
   Plotly.newPlot('plot', [trace], layout, {responsive:true, displayModeBar:false, displaylogo:false, staticPlot:true});
 
-  // Display both the original g / g·mm units (rounded) and SI converted values
-  document.getElementById('results').innerHTML =
-    `<b>Ma</b>: ${Ma_rounded.toLocaleString()} g·mm (${Ma_Nm.toExponential(3)} Nm) &nbsp; ` +
-    `<b>Mb</b>: ${Mb_rounded.toLocaleString()} g·mm (${Mb_Nm.toExponential(3)} Nm)<br>` +
-    `<b>Fa</b>: ${Fa_rounded.toLocaleString()} g (${Fa_N.toExponential(3)} N) &nbsp; ` +
-    `<b>Fb</b>: ${Fb_rounded.toLocaleString()} g (${Fb_N.toExponential(3)} N)<br>` +
-    `Geometry = ${ (a_rad===0 && b_rad===0) ? 0 : G.toFixed(1) }`;
+  // Show only the geometry value in the results area (hide Fa/Ma/Fb/Mb labels)
+  try{
+    const res = document.getElementById('results');
+    if(res){
+      res.textContent = `Geometry = ${ (a_rad===0 && b_rad===0) ? 0 : G.toFixed(1) }`;
+    }
+  }catch(e){ /* ignore errors */ }
 }
 
 // wire up events
