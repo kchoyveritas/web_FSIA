@@ -330,6 +330,95 @@ if(crossSectionSelect){ crossSectionSelect.addEventListener('change', update_I_f
 update_E_from_material();
 update_I_from_cross_section();
 
+// Helpers to show a "Custom" label without adding a visible item in the dropdown
+function setHiddenLabelOption(selectEl, labelText, valueKey){
+  if(!selectEl) return;
+  let hidden = selectEl.querySelector('option[data-custom-hidden]');
+  if(!hidden){
+    hidden = document.createElement('option');
+    hidden.setAttribute('data-custom-hidden','true');
+    hidden.style.display = 'none';
+    hidden.value = valueKey;
+    selectEl.appendChild(hidden);
+  }
+  hidden.text = labelText;
+  selectEl.value = hidden.value;
+}
+
+function clearHiddenLabelOption(selectEl){
+  if(!selectEl) return;
+  const hidden = selectEl.querySelector('option[data-custom-hidden]');
+  if(hidden) hidden.remove();
+}
+
+// keep material select showing "Custom" when user manually changes E
+function syncMaterialToE(){
+  if(!materialSelect) return;
+  const E_el = document.getElementById('E');
+  if(!E_el) return;
+  const E_val = parseFloat(E_el.value);
+  const eps = 0.05; // tolerance to match preset material values (GPa)
+  let matched = null;
+  for(const name in MATERIALS_DATA){
+    if(Math.abs(E_val - MATERIALS_DATA[name]) <= eps){ matched = name; break; }
+  }
+  if(matched){
+    clearHiddenLabelOption(materialSelect);
+    materialSelect.value = matched;
+  } else {
+    setHiddenLabelOption(materialSelect, 'Custom', '__custom_material__');
+  }
+}
+
+// attach listeners to E numeric and range inputs so manual changes mark 'Custom'
+const E_num = document.getElementById('E');
+const E_range_el = document.getElementById('E_range');
+if(E_num){
+  E_num.addEventListener('input', ()=>{ syncMaterialToE(); if(auto.checked) calculate_and_plot(); });
+  E_num.addEventListener('change', ()=>{ syncMaterialToE(); if(auto.checked) calculate_and_plot(); });
+}
+if(E_range_el){
+  E_range_el.addEventListener('input', ()=>{
+    const num = document.getElementById('E'); if(num) num.value = E_range_el.value;
+    syncMaterialToE();
+    if(auto.checked) calculate_and_plot();
+  });
+}
+
+// keep cross-section select showing "Custom" when user manually changes I
+function syncCrossSectionToI(){
+  if(!crossSectionSelect) return;
+  const I_el = document.getElementById('I');
+  if(!I_el) return;
+  const I_val = parseFloat(I_el.value);
+  const epsI = 0.005; // tolerance to match preset cross-section values
+  let matched = null;
+  for(const name in CROSS_SECTIONS_DATA){
+    if(Math.abs(I_val - CROSS_SECTIONS_DATA[name]) <= epsI){ matched = name; break; }
+  }
+  if(matched){
+    clearHiddenLabelOption(crossSectionSelect);
+    crossSectionSelect.value = matched;
+  } else {
+    setHiddenLabelOption(crossSectionSelect, 'Custom', '__custom_cross__');
+  }
+}
+
+// attach listeners to I numeric and range inputs so manual changes mark 'Custom'
+const I_num = document.getElementById('I');
+const I_range_el = document.getElementById('I_range');
+if(I_num){
+  I_num.addEventListener('input', ()=>{ syncCrossSectionToI(); if(auto.checked) calculate_and_plot(); });
+  I_num.addEventListener('change', ()=>{ syncCrossSectionToI(); if(auto.checked) calculate_and_plot(); });
+}
+if(I_range_el){
+  I_range_el.addEventListener('input', ()=>{
+    const num = document.getElementById('I'); if(num) num.value = I_range_el.value;
+    syncCrossSectionToI();
+    if(auto.checked) calculate_and_plot();
+  });
+}
+
 // initial plot
 calculate_and_plot();
 
